@@ -1,0 +1,13 @@
+syntax: glob
+*.suo
+*.user
+bin/*
+obj/*
+_ReSharper.*/*
+dist/*
+packages/*
+*.bin
+*.crc
+*.pdb
+*.orig
+*.svn-base
