@@ -54,9 +54,7 @@ namespace MultiplayerGame.Networking
             config.EnableMessageType(NetIncomingMessageType.ErrorMessage);
             config.EnableMessageType(NetIncomingMessageType.Error);
             config.EnableMessageType(NetIncomingMessageType.DebugMessage);
-            config.EnableMessageType(NetIncomingMessageType.UnconnectedData);
             config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
-            config.EnableMessageType(NetIncomingMessageType.ConnectionLatencyUpdated);
 
             this.netClient = new NetClient(config);
             this.netClient.Start();
