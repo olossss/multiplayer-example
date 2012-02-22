@@ -6,11 +6,13 @@ using MultiplayerGame;
 
 namespace Client
 {
+    using MultiplayerGame.Networking;
+
     class Program
     {
         static void Main(string[] args)
         {
-            using (var game = new ExampleGame(new GameSettings() { NetworkingMode = NetworkingModeTypes.Client }))
+            using (var game = new ExampleGame(new ClientNetworkManager()))
             {
                 game.Run();
             }
