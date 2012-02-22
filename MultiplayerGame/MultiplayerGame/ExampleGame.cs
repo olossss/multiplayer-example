@@ -8,6 +8,8 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using MultiplayerGame.Managers;
+using MultiplayerGame.RandomNumbers;
 
 namespace MultiplayerGame
 {
@@ -21,13 +23,30 @@ namespace MultiplayerGame
 
         private readonly GameSettings gameSettings;
 
+        private readonly ResolutionManager resolutionManager;
+
+        private AsteroidManager asteroidManager;
+
         public ExampleGame(GameSettings gameSettings)
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this) { PreferMultiSampling = true, PreferredBackBufferWidth = 800, PreferredBackBufferHeight = 600 };
+
+            Window.AllowUserResizing = true;
+            Window.ClientSizeChanged += WindowClientSizeChanged;
+
+            graphics.ApplyChanges();
+
             Content.RootDirectory = "Content";
+            IsMouseVisible = true;
+
+            resolutionManager = new ResolutionManager();
+            resolutionManager.Init(ref graphics);
+            resolutionManager.SetVirtualResolution(800, 600);
+            resolutionManager.SetResolution(800, 600, false);
 
             this.gameSettings = gameSettings;
         }
+
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -38,6 +57,9 @@ namespace MultiplayerGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            var randomNumberGenerator = new MersenneTwister();
+
+            this.asteroidManager = new AsteroidManager(this.resolutionManager, randomNumberGenerator, );
 
             base.Initialize();
         }
@@ -98,6 +120,11 @@ namespace MultiplayerGame
             spriteBatch.End();
 
             base.Draw(gameTime);
+        }
+
+        private void WindowClientSizeChanged(object sender, System.EventArgs e)
+        {
+            resolutionManager.SetResolution(Window.ClientBounds.Width, Window.ClientBounds.Height, false);
         }
     }
 }
