@@ -1,4 +1,6 @@
-﻿namespace MultiplayerGame.Networking
+﻿using MultiplayerGame.Networking.Messages;
+
+namespace MultiplayerGame.Networking
 {
     using System;
 
@@ -14,6 +16,6 @@
 
         void Recycle(NetIncomingMessage im);
 
-        NetOutgoingMessage CreateMessage();
+        void SendMessage(IGameMessage gameMessage);
     }
 }

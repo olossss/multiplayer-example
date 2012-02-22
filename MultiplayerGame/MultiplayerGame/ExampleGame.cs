@@ -8,7 +8,9 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using MultiplayerGame.Entities;
 using MultiplayerGame.Managers;
+using MultiplayerGame.Networking.Messages;
 using MultiplayerGame.RandomNumbers;
 
 namespace MultiplayerGame
@@ -26,6 +28,10 @@ namespace MultiplayerGame
         SpriteBatch spriteBatch;
 
         private readonly INetworkManager networkManager;
+
+        private readonly ResolutionManager resolutionManager;
+
+        private AsteroidManager asteroidManager;
 
         public ExampleGame(INetworkManager networkManager)
         {
@@ -47,6 +53,7 @@ namespace MultiplayerGame
             this.networkManager = networkManager;
         }
 
+        private bool IsHost { get { return this.networkManager is ServerNetworkManager; } }
 
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
@@ -57,6 +64,15 @@ namespace MultiplayerGame
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            this.networkManager.Connect();
+
+            var randomNumberGenerator = new MersenneTwister();
+
+            this.asteroidManager = new AsteroidManager(this.resolutionManager, randomNumberGenerator, this.IsHost);
+            if (this.IsHost)
+            {
+                this.asteroidManager.AsteroidStateChanged += (sender, e) => this.networkManager.SendMessage(new UpdateAsteroidStateMessage(e.Asteroid));
+            }
 
             base.Initialize();
         }
@@ -70,12 +86,12 @@ namespace MultiplayerGame
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            this.font = Content.Load<SpriteFont>(@"Fonts\Verdana10");
-
             // TODO: use this.Content to load your game content here
-        }
+            resolutionManager.FullViewport();
+            resolutionManager.ResetViewport();
 
-        private SpriteFont font;
+            this.asteroidManager.LoadContent(this.Content);
+        }
 
         /// <summary>
         /// UnloadContent will be called once per game and is the place to unload
@@ -101,6 +117,8 @@ namespace MultiplayerGame
 
             // TODO: Add your update logic here
             this.ProcessNetworkMessages();
+
+            this.asteroidManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -133,9 +151,43 @@ namespace MultiplayerGame
                                 break;
                         }
                         break;
+                    case NetIncomingMessageType.Data:
+                        var gameMessageType = (GameMessageTypes)im.ReadByte();
+                        switch(gameMessageType)
+                        {
+                            case GameMessageTypes.UpdateAsteroidState:
+                                this.HandleUpdateAsteroidStateMessage(im);
+                                break;
+                        }
+                        break;
                 }
 
                 this.networkManager.Recycle(im);
+            }
+        }
+
+        private void HandleUpdateAsteroidStateMessage(NetIncomingMessage im)
+        {
+            var message = new UpdateAsteroidStateMessage(im);
+
+            var timeDelay = (float) (NetTime.Now - im.SenderConnection.GetLocalTime(message.MessageTime));
+
+            Asteroid asteroid = this.asteroidManager.GetAsteroid(message.Id) ??
+                                this.asteroidManager.AddAsteroid(
+                                    message.Id, message.Position, message.Velocity, message.Rotation);
+
+            asteroid.EnableSmoothing = true;
+
+            if (asteroid.LastUpdateTime < message.MessageTime)
+            {
+                asteroid.PrevDisplayState = (EntityState)asteroid.DisplayState.Clone();
+
+                asteroid.SimulationState.Position = message.Position += (message.Velocity * timeDelay);
+
+                asteroid.SimulationState.Velocity = message.Velocity;
+                asteroid.SimulationState.Rotation = message.Rotation;
+
+                asteroid.LastUpdateTime = message.MessageTime;
             }
         }
 
@@ -149,7 +201,7 @@ namespace MultiplayerGame
 
             spriteBatch.Begin();
 
-            spriteBatch.DrawString(this.font, string.Format("Hello World I am the {0}", this.networkManager is ClientNetworkManager ? "Client" : "Server"), new Vector2(100, 100), Color.White);
+            this.asteroidManager.Draw(spriteBatch);
 
             spriteBatch.End();
 
