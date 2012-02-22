@@ -103,11 +103,15 @@ namespace MultiplayerGame.Managers
         {
             EntityState physicsState = this.SelectRandomEntityState();
 
-            return this.AddAsteroid(
+            var asteroid = this.AddAsteroid(
                 Interlocked.Increment(ref asteroidIdCounter),
                 physicsState.Position,
                 physicsState.Velocity,
                 physicsState.Rotation);
+
+            this.OnAsteroidStateChanged(asteroid);
+
+            return asteroid;
         }
 
         public Asteroid AddAsteroid(long id, Vector2 position, Vector2 velocity, float rotation)

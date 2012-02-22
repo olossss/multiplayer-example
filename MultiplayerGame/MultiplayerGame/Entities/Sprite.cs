@@ -4,15 +4,12 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-
 namespace MultiplayerGame.Entities
 {
-    using System;
     using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
     /// TODO: Update summary.
@@ -28,8 +25,6 @@ namespace MultiplayerGame.Entities
         private readonly GameTimer frameTimer = new GameTimer();
 
         private int currentFrameIndex;
-
-        private bool enableSmoothing;
 
         private Color tintColor = Color.White;
 
@@ -112,19 +107,9 @@ namespace MultiplayerGame.Entities
             }
         }
 
-        public EntityState DisplayState { get; set; }
+        
 
-        public bool EnableSmoothing
-        {
-            get
-            {
-                return this.enableSmoothing;
-            }
-            set
-            {
-                this.enableSmoothing = value;
-            }
-        }
+       
 
         public long Id { get; set; }
 
@@ -135,6 +120,10 @@ namespace MultiplayerGame.Entities
         public EntityState PrevDisplayState { get; set; }
 
         public EntityState SimulationState { get; set; }
+
+        public EntityState DisplayState { get; set; }
+
+        public bool EnableSmoothing { get; set; }
 
         public Texture2D Texture { get; set; }
 
@@ -154,6 +143,13 @@ namespace MultiplayerGame.Entities
 
         #region Public Methods
 
+        
+
+        public bool IsCircleColliding(Vector2 otherCenter, float otherRadius)
+        {
+            return Vector2.Distance(this.Center, otherCenter) < (this.CollisionRadius + otherRadius);
+        }
+
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             spriteBatch.Draw(
@@ -168,11 +164,6 @@ namespace MultiplayerGame.Entities
                 0.0f);
         }
 
-        public bool IsCircleColliding(Vector2 otherCenter, float otherRadius)
-        {
-            return Vector2.Distance(this.Center, otherCenter) < (this.CollisionRadius + otherRadius);
-        }
-
         public virtual void Update(GameTime gameTime)
         {
             var elapsedSeconds = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -184,7 +175,7 @@ namespace MultiplayerGame.Entities
 
             this.SimulationState.Position += this.SimulationState.Velocity * elapsedSeconds;
 
-            if (this.enableSmoothing)
+            if (this.EnableSmoothing)
             {
                 this.PrevDisplayState.Position += this.PrevDisplayState.Velocity * elapsedSeconds;
 
