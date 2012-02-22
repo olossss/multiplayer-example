@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using MultiplayerGame.Networking.Messages;
+
 namespace MultiplayerGame.Networking
 {
     using System;
@@ -45,7 +47,7 @@ namespace MultiplayerGame.Networking
         {
             var config = new NetPeerConfiguration("Asteroid")
             {
-                //SimulatedMinimumLatency = 0.2f, 
+                SimulatedMinimumLatency = 0.2f, 
                 //SimulatedLoss = 0.1f
             };
 
@@ -77,9 +79,10 @@ namespace MultiplayerGame.Networking
             this.netClient.Recycle(im);
         }
 
-        public NetOutgoingMessage CreateMessage()
+        public void SendMessage(IGameMessage gameMessage)
         {
-            return this.netClient.CreateMessage();
+            throw new NotImplementedException();
         }
+
     }
 }

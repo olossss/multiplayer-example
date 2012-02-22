@@ -4,6 +4,8 @@
 // </copyright>
 // -----------------------------------------------------------------------
 
+using MultiplayerGame.Networking.Messages;
+
 namespace MultiplayerGame.Networking
 {
     using System;
@@ -56,9 +58,13 @@ namespace MultiplayerGame.Networking
             this.netServer.Recycle(im);
         }
 
-        public NetOutgoingMessage CreateMessage()
+        public void SendMessage(IGameMessage gameMessage)
         {
-            return this.netServer.CreateMessage();
+            NetOutgoingMessage om = netServer.CreateMessage();
+            om.Write((byte)gameMessage.MessageType);
+            gameMessage.Encode(om);
+
+            netServer.SendToAll(om, NetDeliveryMethod.ReliableUnordered);
         }
 
         public void Dispose()

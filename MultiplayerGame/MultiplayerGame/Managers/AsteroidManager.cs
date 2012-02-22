@@ -52,6 +52,8 @@ namespace MultiplayerGame.Managers
 
         private int asteroidCount = 10;
 
+        private GameTimer hearbeatTimer;
+
         #endregion
 
         #region Constructors and Destructors
@@ -149,6 +151,7 @@ namespace MultiplayerGame.Managers
         public void LoadContent(ContentManager contentManager)
         {
             this.spriteSheet = contentManager.Load<Texture2D>(@"Textures\SpriteSheet");
+            this.hearbeatTimer = new GameTimer();
         }
 
         public EntityState SelectRandomEntityState()
@@ -227,23 +230,26 @@ namespace MultiplayerGame.Managers
 
         public void Update(GameTime gameTime)
         {
-            foreach (Asteroid asteroid in this.asteroids.Values)
+            foreach (Asteroid asteroid in this.Asteroids)
             {
                 asteroid.Update(gameTime);
-                if (!this.IsOnScreen(asteroid))
+                if (this.isHost)
                 {
-                    asteroid.SimulationState = this.SelectRandomEntityState();
-                    this.OnAsteroidStateChanged(asteroid);
+                    if (!this.IsOnScreen(asteroid))
+                    {
+                        asteroid.SimulationState = this.SelectRandomEntityState();
+                        this.OnAsteroidStateChanged(asteroid);
+                    }
                 }
             }
 
             var processedList = new List<Asteroid>();
-            foreach (Asteroid a1 in this.asteroids.Values)
+            foreach (Asteroid a1 in this.Asteroids)
             {
                 processedList.Add(a1);
                 foreach (Asteroid a2 in this.asteroids.Values.Except(processedList))
                 {
-                    if (a1.IsCircleColliding(a2.Center, a2.CollisionRadius) && a1.TintColor == a2.TintColor)
+                    if (a1.IsCircleColliding(a2.Center, a2.CollisionRadius))
                     {
                         this.BounceAsteroids(a1, a2);
                     }
@@ -255,6 +261,14 @@ namespace MultiplayerGame.Managers
                 for (int i = this.asteroids.Count; i < this.asteroidCount; i++)
                 {
                     this.AddAsteroid();
+                }
+
+                if (this.hearbeatTimer.Stopwatch(200))
+                {
+                    foreach (var asteroid in this.Asteroids)
+                    {
+                        this.OnAsteroidStateChanged(asteroid);
+                    }
                 }
             }
         }
