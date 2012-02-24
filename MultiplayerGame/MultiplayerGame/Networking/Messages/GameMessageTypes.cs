@@ -2,6 +2,7 @@
 {
     public enum GameMessageTypes
     {
-        UpdateAsteroidState
+        UpdateAsteroidState,
+        UpdatePlayerState
     }
 }

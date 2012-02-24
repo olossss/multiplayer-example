@@ -33,6 +33,10 @@ namespace MultiplayerGame
 
         private AsteroidManager asteroidManager;
 
+        private InputManager inputManager;
+
+        private PlayerManager playerManager;
+
         public ExampleGame(INetworkManager networkManager)
         {
             graphics = new GraphicsDeviceManager(this) { PreferMultiSampling = true, PreferredBackBufferWidth = 800, PreferredBackBufferHeight = 600 };
@@ -67,12 +71,19 @@ namespace MultiplayerGame
             this.networkManager.Connect();
 
             var randomNumberGenerator = new MersenneTwister();
+            this.inputManager = new InputManager(this, this.resolutionManager);
 
             this.asteroidManager = new AsteroidManager(this.resolutionManager, randomNumberGenerator, this.IsHost);
             if (this.IsHost)
             {
                 this.asteroidManager.AsteroidStateChanged += (sender, e) => this.networkManager.SendMessage(new UpdateAsteroidStateMessage(e.Asteroid));
             }
+
+            this.playerManager = new PlayerManager(this.resolutionManager, randomNumberGenerator, this.inputManager, this.IsHost);
+            this.playerManager.PlayerStateChanged += (sender, e) => this.networkManager.SendMessage(new UpdatePlayerStateMessage(e.Player));
+
+
+            this.Components.Add(this.inputManager);
 
             base.Initialize();
         }
@@ -91,6 +102,12 @@ namespace MultiplayerGame
             resolutionManager.ResetViewport();
 
             this.asteroidManager.LoadContent(this.Content);
+            this.playerManager.LoadContent(this.Content);
+
+            if (this.IsHost)
+            {
+                this.playerManager.AddPlayer(true);
+            }
         }
 
         /// <summary>
@@ -112,13 +129,14 @@ namespace MultiplayerGame
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (Keyboard.GetState(PlayerIndex.One).IsKeyDown(Keys.Escape))
+            if (this.inputManager.IsKeyPressed(Keys.Escape))
                 this.Exit();
 
             // TODO: Add your update logic here
             this.ProcessNetworkMessages();
 
             this.asteroidManager.Update(gameTime);
+            this.playerManager.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -141,13 +159,24 @@ namespace MultiplayerGame
                         switch ((NetConnectionStatus)im.ReadByte())
                         {
                             case NetConnectionStatus.Connected:
-                                Console.WriteLine("{0} Connected", im.SenderEndpoint);
+                                if (!this.IsHost)
+                                {
+                                    var message = new UpdatePlayerStateMessage(im.SenderConnection.RemoteHailMessage);
+                                    this.playerManager.AddPlayer(message.Id, message.Position, message.Velocity, message.Rotation, true);
+                                    Console.WriteLine("Connected to {0}", im.SenderEndpoint);
+                                }
+                                else
+                                {
+                                    Console.WriteLine("{0} Connected", im.SenderEndpoint);
+                                }
                                 break;
                             case NetConnectionStatus.Disconnected:
-                                Console.WriteLine("{0} Disconnected", im.SenderEndpoint);
+                                Console.WriteLine(this.IsHost ? "{0} Disconnected" : "Disconnected from {0}", im.SenderEndpoint);
                                 break;
                             case NetConnectionStatus.RespondedAwaitingApproval:
-                                im.SenderConnection.Approve();
+                                NetOutgoingMessage hailMessage = this.networkManager.CreateMessage();
+                                new UpdatePlayerStateMessage(playerManager.AddPlayer(false)).Encode(hailMessage);
+                                im.SenderConnection.Approve(hailMessage);
                                 break;
                         }
                         break;
@@ -158,11 +187,38 @@ namespace MultiplayerGame
                             case GameMessageTypes.UpdateAsteroidState:
                                 this.HandleUpdateAsteroidStateMessage(im);
                                 break;
+                            case GameMessageTypes.UpdatePlayerState:
+                                this.HandleUpdatePlayerStateMessage(im);
+                                break;
                         }
                         break;
                 }
 
                 this.networkManager.Recycle(im);
+            }
+        }
+
+        private void HandleUpdatePlayerStateMessage(NetIncomingMessage im)
+        {
+            var message = new UpdatePlayerStateMessage(im);
+
+            var timeDelay = (float)(NetTime.Now - im.SenderConnection.GetLocalTime(message.MessageTime));
+
+            Player player = this.playerManager.GetPlayer(message.Id) ??
+                                this.playerManager.AddPlayer(message.Id, message.Position, message.Velocity, message.Rotation, false);
+
+            //player.EnableSmoothing = true;
+
+            if (player.LastUpdateTime < message.MessageTime)
+            {
+                player.PrevDisplayState = (EntityState)player.DisplayState.Clone();
+
+                player.SimulationState.Position = message.Position += (message.Velocity * timeDelay);
+
+                player.SimulationState.Velocity = message.Velocity;
+                player.SimulationState.Rotation = message.Rotation;
+
+                player.LastUpdateTime = message.MessageTime;
             }
         }
 
@@ -176,7 +232,7 @@ namespace MultiplayerGame
                                 this.asteroidManager.AddAsteroid(
                                     message.Id, message.Position, message.Velocity, message.Rotation);
 
-            asteroid.EnableSmoothing = true;
+            //asteroid.EnableSmoothing = true;
 
             if (asteroid.LastUpdateTime < message.MessageTime)
             {
@@ -202,6 +258,7 @@ namespace MultiplayerGame
             spriteBatch.Begin();
 
             this.asteroidManager.Draw(spriteBatch);
+            this.playerManager.Draw(spriteBatch);
 
             spriteBatch.End();
 
