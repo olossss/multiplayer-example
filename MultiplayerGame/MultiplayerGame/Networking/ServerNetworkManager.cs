@@ -67,6 +67,11 @@ namespace MultiplayerGame.Networking
             netServer.SendToAll(om, NetDeliveryMethod.ReliableUnordered);
         }
 
+        public NetOutgoingMessage CreateMessage()
+        {
+            return this.netServer.CreateMessage();
+        }
+
         public void Dispose()
         {
             this.Dispose(true);

@@ -81,8 +81,16 @@ namespace MultiplayerGame.Networking
 
         public void SendMessage(IGameMessage gameMessage)
         {
-            throw new NotImplementedException();
+            var om = this.netClient.CreateMessage();
+            om.Write((byte)gameMessage.MessageType);
+            gameMessage.Encode(om);
+
+            this.netClient.SendMessage(om, NetDeliveryMethod.ReliableUnordered);
         }
 
+        public NetOutgoingMessage CreateMessage()
+        {
+            return this.netClient.CreateMessage();
+        }
     }
 }

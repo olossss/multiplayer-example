@@ -17,5 +17,7 @@ namespace MultiplayerGame.Networking
         void Recycle(NetIncomingMessage im);
 
         void SendMessage(IGameMessage gameMessage);
+
+        NetOutgoingMessage CreateMessage();
     }
 }
