@@ -207,14 +207,11 @@ namespace MultiplayerGame
             Player player = this.playerManager.GetPlayer(message.Id) ??
                                 this.playerManager.AddPlayer(message.Id, message.Position, message.Velocity, message.Rotation, false);
 
-            //player.EnableSmoothing = true;
+            player.EnableSmoothing = true;
 
             if (player.LastUpdateTime < message.MessageTime)
             {
-                player.PrevDisplayState = (EntityState)player.DisplayState.Clone();
-
                 player.SimulationState.Position = message.Position += (message.Velocity * timeDelay);
-
                 player.SimulationState.Velocity = message.Velocity;
                 player.SimulationState.Rotation = message.Rotation;
 
@@ -236,8 +233,6 @@ namespace MultiplayerGame
 
             if (asteroid.LastUpdateTime < message.MessageTime)
             {
-                asteroid.PrevDisplayState = (EntityState)asteroid.DisplayState.Clone();
-
                 asteroid.SimulationState.Position = message.Position += (message.Velocity * timeDelay);
 
                 asteroid.SimulationState.Velocity = message.Velocity;

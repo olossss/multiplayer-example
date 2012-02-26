@@ -347,5 +347,10 @@ namespace MultiplayerGame.Managers
         }
 
         #endregion
+
+        public bool PayerIsLocal(Player player)
+        {
+            return this.localPlayer != null && this.localPlayer.Id == player.Id;
+        }
     }
 }

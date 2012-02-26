@@ -152,6 +152,21 @@ namespace MultiplayerGame.Entities
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
+            if (this.EnableSmoothing)
+            {
+                spriteBatch.Draw(
+                    this.Texture,
+                    this.SimulationState.Position + new Vector2(this.InitialFrame.Width / 2, this.InitialFrame.Height / 2),
+                    this.CurrentFrame,
+                    Color.DarkSlateGray,
+                    this.SimulationState.Rotation,
+                    new Vector2(this.InitialFrame.Width / 2, this.InitialFrame.Height / 2),
+                    1.0f,
+                    SpriteEffects.None,
+                    0.0f);
+
+            }
+
             spriteBatch.Draw(
                 this.Texture,
                 this.DisplayState.Position + new Vector2(this.InitialFrame.Width / 2, this.InitialFrame.Height / 2),
@@ -179,7 +194,7 @@ namespace MultiplayerGame.Entities
             {
                 this.PrevDisplayState.Position += this.PrevDisplayState.Velocity * elapsedSeconds;
 
-                this.ApplySmoothing(elapsedSeconds);
+                this.ApplySmoothing(1/12f);
             }
             else
             {
@@ -194,13 +209,13 @@ namespace MultiplayerGame.Entities
         private void ApplySmoothing(float delta)
         {
             this.DisplayState.Position = Vector2.Lerp(
-                this.SimulationState.Position, this.PrevDisplayState.Position, delta);
+                this.PrevDisplayState.Position, this.SimulationState.Position, delta);
 
             this.DisplayState.Velocity = Vector2.Lerp(
-                this.SimulationState.Velocity, this.PrevDisplayState.Velocity, delta);
+                this.PrevDisplayState.Velocity, this.SimulationState.Velocity, delta);
 
             this.DisplayState.Rotation = MathHelper.Lerp(
-                this.SimulationState.Rotation, this.PrevDisplayState.Rotation, delta);
+                this.PrevDisplayState.Rotation, this.SimulationState.Rotation, delta);
 
             this.PrevDisplayState = (EntityState)this.DisplayState.Clone();
         }

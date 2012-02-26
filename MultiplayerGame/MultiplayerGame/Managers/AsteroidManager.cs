@@ -241,7 +241,7 @@ namespace MultiplayerGame.Managers
                 {
                     if (!this.IsOnScreen(asteroid))
                     {
-                        asteroid.SimulationState = this.SelectRandomEntityState();
+                        asteroid.ResetAsteroidState(this.SelectRandomEntityState());
                         this.OnAsteroidStateChanged(asteroid);
                     }
                 }

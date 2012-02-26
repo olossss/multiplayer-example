@@ -33,5 +33,12 @@ namespace MultiplayerGame.Entities
         }
 
         #endregion
+
+        public void ResetAsteroidState(EntityState newState)
+        {
+            this.SimulationState = newState;
+            this.DisplayState = (EntityState)this.SimulationState.Clone();
+            this.PrevDisplayState = (EntityState)this.SimulationState.Clone();
+        }
     }
 }
