@@ -1,16 +1,14 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="Thickness.cs" company="Microsoft">
-// TODO: Update copyright text.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Thickness.cs" company="">
+//   
 // </copyright>
-// -----------------------------------------------------------------------
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
@@ -18,6 +16,12 @@ namespace MultiplayerGame
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Thickness"/> class.
+        /// </summary>
+        /// <param name="uniformLength">
+        /// The uniform length.
+        /// </param>
         public Thickness(int uniformLength)
         {
             this.Left = uniformLength;
@@ -26,6 +30,21 @@ namespace MultiplayerGame
             this.Bottom = uniformLength;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Thickness"/> class.
+        /// </summary>
+        /// <param name="left">
+        /// The left.
+        /// </param>
+        /// <param name="top">
+        /// The top.
+        /// </param>
+        /// <param name="right">
+        /// The right.
+        /// </param>
+        /// <param name="bottom">
+        /// The bottom.
+        /// </param>
         public Thickness(int left, int top, int right, int bottom)
         {
             this.Left = left;
@@ -36,14 +55,26 @@ namespace MultiplayerGame
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
+        /// <summary>
+        /// Gets or sets Bottom.
+        /// </summary>
         public int Bottom { get; set; }
 
+        /// <summary>
+        /// Gets or sets Left.
+        /// </summary>
         public int Left { get; set; }
 
+        /// <summary>
+        /// Gets or sets Right.
+        /// </summary>
         public int Right { get; set; }
 
+        /// <summary>
+        /// Gets or sets Top.
+        /// </summary>
         public int Top { get; set; }
 
         #endregion

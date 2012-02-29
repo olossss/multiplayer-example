@@ -1,18 +1,16 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="ResolutionManager.cs" company="Microsoft">
-// TODO: Update copyright text.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="ResolutionManager.cs" company="">
+//   
 // </copyright>
-// -----------------------------------------------------------------------
-
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame.Managers
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+    using Microsoft.Xna.Framework;
+    using Microsoft.Xna.Framework.Graphics;
 
     /// <summary>
     /// TODO: Update summary.
@@ -21,28 +19,58 @@ namespace MultiplayerGame.Managers
     {
         #region Constants and Fields
 
+        /// <summary>
+        /// The graphics device manager.
+        /// </summary>
         private GraphicsDeviceManager graphicsDeviceManager;
 
+        /// <summary>
+        /// The height.
+        /// </summary>
         private int height = 600;
 
+        /// <summary>
+        /// The is full screen.
+        /// </summary>
         private bool isFullScreen;
 
+        /// <summary>
+        /// The matrix is dirty.
+        /// </summary>
         private bool matrixIsDirty = true;
 
+        /// <summary>
+        /// The scale matrix.
+        /// </summary>
         private Matrix scaleMatrix;
 
+        /// <summary>
+        /// The v height.
+        /// </summary>
         private int vHeight = 768;
 
+        /// <summary>
+        /// The v width.
+        /// </summary>
         private int vWidth = 1024;
 
+        /// <summary>
+        /// The width.
+        /// </summary>
         private int width = 800;
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
+        /// <summary>
+        /// Gets DisplayViewport.
+        /// </summary>
         public Viewport DisplayViewport { get; private set; }
 
+        /// <summary>
+        /// Gets VirtualResolution.
+        /// </summary>
         public Vector2 VirtualResolution
         {
             get
@@ -53,7 +81,7 @@ namespace MultiplayerGame.Managers
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
         /// <summary>
         /// Sets the device to use the draw pump
@@ -63,16 +91,22 @@ namespace MultiplayerGame.Managers
         {
             // Start by reseting viewport to (0,0,1,1)
             this.FullViewport();
+
             // Clear to Black
             this.graphicsDeviceManager.GraphicsDevice.Clear(Color.Black);
+
             // Calculate Proper Viewport according to Aspect Ratio
             this.ResetViewport();
+
             // and clear that
             // This way we are gonna have black bars if aspect ratio requires it and
             // the clear color on the rest
             this.graphicsDeviceManager.GraphicsDevice.Clear(Color.Black);
         }
 
+        /// <summary>
+        /// The full viewport.
+        /// </summary>
         public void FullViewport()
         {
             var vp = new Viewport();
@@ -82,6 +116,11 @@ namespace MultiplayerGame.Managers
             this.graphicsDeviceManager.GraphicsDevice.Viewport = vp;
         }
 
+        /// <summary>
+        /// The get transformation matrix.
+        /// </summary>
+        /// <returns>
+        /// </returns>
         public Matrix GetTransformationMatrix()
         {
             if (this.matrixIsDirty)
@@ -95,12 +134,20 @@ namespace MultiplayerGame.Managers
         /// <summary>
         /// Get virtual Mode Aspect Ratio
         /// </summary>
-        /// <returns>aspect ratio</returns>
+        /// <returns>
+        /// aspect ratio
+        /// </returns>
         public float GetVirtualAspectRatio()
         {
             return this.vWidth / (float)this.vHeight;
         }
 
+        /// <summary>
+        /// The init.
+        /// </summary>
+        /// <param name="device">
+        /// The device.
+        /// </param>
         public void Init(ref GraphicsDeviceManager device)
         {
             this.width = device.PreferredBackBufferWidth;
@@ -110,9 +157,13 @@ namespace MultiplayerGame.Managers
             this.ApplyResolutionSettings();
         }
 
+        /// <summary>
+        /// The reset viewport.
+        /// </summary>
         public void ResetViewport()
         {
             float targetAspectRatio = this.GetVirtualAspectRatio();
+
             // figure out the largest area that fits in this resolution at the desired aspect ratio
             int newWidth = this.graphicsDeviceManager.PreferredBackBufferWidth;
             var newHeight = (int)(newWidth / targetAspectRatio + .5f);
@@ -121,6 +172,7 @@ namespace MultiplayerGame.Managers
             if (newHeight > this.graphicsDeviceManager.PreferredBackBufferHeight)
             {
                 newHeight = this.graphicsDeviceManager.PreferredBackBufferHeight;
+
                 // PillarBox
                 newWidth = (int)(newHeight * targetAspectRatio + .5f);
                 changed = true;
@@ -128,14 +180,14 @@ namespace MultiplayerGame.Managers
 
             // set up the new viewport centered in the backbuffer
             this.DisplayViewport = new Viewport
-            {
-                X = (this.graphicsDeviceManager.PreferredBackBufferWidth / 2) - (newWidth / 2),
-                Y = (this.graphicsDeviceManager.PreferredBackBufferHeight / 2) - (newHeight / 2),
-                Width = newWidth,
-                Height = newHeight,
-                MinDepth = 0,
-                MaxDepth = 1
-            };
+                {
+                    X = (this.graphicsDeviceManager.PreferredBackBufferWidth / 2) - (newWidth / 2), 
+                    Y = (this.graphicsDeviceManager.PreferredBackBufferHeight / 2) - (newHeight / 2), 
+                    Width = newWidth, 
+                    Height = newHeight, 
+                    MinDepth = 0, 
+                    MaxDepth = 1
+                };
 
             if (changed)
             {
@@ -145,6 +197,18 @@ namespace MultiplayerGame.Managers
             this.graphicsDeviceManager.GraphicsDevice.Viewport = this.DisplayViewport;
         }
 
+        /// <summary>
+        /// The set resolution.
+        /// </summary>
+        /// <param name="newWidth">
+        /// The new width.
+        /// </param>
+        /// <param name="newHeight">
+        /// The new height.
+        /// </param>
+        /// <param name="newFullScreen">
+        /// The new full screen.
+        /// </param>
         public void SetResolution(int newWidth, int newHeight, bool newFullScreen)
         {
             this.width = newWidth;
@@ -155,6 +219,15 @@ namespace MultiplayerGame.Managers
             this.ApplyResolutionSettings();
         }
 
+        /// <summary>
+        /// The set virtual resolution.
+        /// </summary>
+        /// <param name="newWidth">
+        /// The new width.
+        /// </param>
+        /// <param name="newHeight">
+        /// The new height.
+        /// </param>
         public void SetVirtualResolution(int newWidth, int newHeight)
         {
             this.vWidth = newWidth;
@@ -163,10 +236,18 @@ namespace MultiplayerGame.Managers
             this.matrixIsDirty = true;
         }
 
+        /// <summary>
+        /// The transform to view space.
+        /// </summary>
+        /// <param name="windowCoordinate">
+        /// The window coordinate.
+        /// </param>
+        /// <returns>
+        /// </returns>
         public Vector2 TransformToViewSpace(Vector2 windowCoordinate)
         {
             return Vector2.Transform(
-                windowCoordinate - new Vector2(this.DisplayViewport.X, this.DisplayViewport.Y),
+                windowCoordinate - new Vector2(this.DisplayViewport.X, this.DisplayViewport.Y), 
                 Matrix.Invert(this.scaleMatrix));
         }
 
@@ -174,6 +255,9 @@ namespace MultiplayerGame.Managers
 
         #region Methods
 
+        /// <summary>
+        /// The apply resolution settings.
+        /// </summary>
         private void ApplyResolutionSettings()
         {
 #if XBOX360
@@ -184,8 +268,8 @@ namespace MultiplayerGame.Managers
             // be set to anything equal to or smaller than the actual screen size.
             if (this.isFullScreen == false)
             {
-                if ((this.width <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width) &&
-                    (this.height <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
+                if ((this.width <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width)
+                    && (this.height <= GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height))
                 {
                     this.graphicsDeviceManager.PreferredBackBufferWidth = this.width;
                     this.graphicsDeviceManager.PreferredBackBufferHeight = this.height;
@@ -220,13 +304,16 @@ namespace MultiplayerGame.Managers
             this.height = this.graphicsDeviceManager.PreferredBackBufferHeight;
         }
 
+        /// <summary>
+        /// The recreate scale matrix.
+        /// </summary>
         private void RecreateScaleMatrix()
         {
             this.matrixIsDirty = false;
             this.scaleMatrix =
                 Matrix.CreateScale(
-                    (float)this.graphicsDeviceManager.GraphicsDevice.Viewport.Width / this.vWidth,
-                    (float)this.graphicsDeviceManager.GraphicsDevice.Viewport.Width / this.vWidth,
+                    (float)this.graphicsDeviceManager.GraphicsDevice.Viewport.Width / this.vWidth, 
+                    (float)this.graphicsDeviceManager.GraphicsDevice.Viewport.Width / this.vWidth, 
                     1f);
         }
 

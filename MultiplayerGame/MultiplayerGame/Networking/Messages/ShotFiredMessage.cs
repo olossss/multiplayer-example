@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="UpdatePlayerStateMessage.cs" company="">
+// <copyright file="ShotFiredMessage.cs" company="">
 //   
 // </copyright>
 // <summary>
@@ -19,46 +19,50 @@ namespace MultiplayerGame.Networking.Messages
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class UpdatePlayerStateMessage : IGameMessage
+    public class ShotFiredMessage : IGameMessage
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpdatePlayerStateMessage"/> class.
+        /// Initializes a new instance of the <see cref="ShotFiredMessage"/> class.
         /// </summary>
         /// <param name="im">
         /// The im.
         /// </param>
-        public UpdatePlayerStateMessage(NetIncomingMessage im)
+        public ShotFiredMessage(NetIncomingMessage im)
         {
             this.Decode(im);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="UpdatePlayerStateMessage"/> class.
+        /// Initializes a new instance of the <see cref="ShotFiredMessage"/> class.
         /// </summary>
-        public UpdatePlayerStateMessage()
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UpdatePlayerStateMessage"/> class.
-        /// </summary>
-        /// <param name="player">
-        /// The player.
+        /// <param name="shot">
+        /// The shot.
         /// </param>
-        public UpdatePlayerStateMessage(Player player)
+        public ShotFiredMessage(Shot shot)
         {
-            this.Id = player.Id;
-            this.Position = player.SimulationState.Position;
-            this.Velocity = player.SimulationState.Velocity;
-            this.Rotation = player.SimulationState.Rotation;
+            this.Id = shot.Id;
+            this.Position = shot.SimulationState.Position;
+            this.Velocity = shot.SimulationState.Velocity;
+            this.FiredByPlayer = shot.FiredByPlayer;
             this.MessageTime = NetTime.Now;
+            this.FiredById = shot.FiredById;
         }
 
         #endregion
 
         #region Public Properties
+
+        /// <summary>
+        /// Gets or sets FiredById.
+        /// </summary>
+        public long FiredById { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether FiredByPlayer.
+        /// </summary>
+        public bool FiredByPlayer { get; set; }
 
         /// <summary>
         /// Gets or sets Id.
@@ -77,7 +81,7 @@ namespace MultiplayerGame.Networking.Messages
         {
             get
             {
-                return GameMessageTypes.UpdatePlayerState;
+                return GameMessageTypes.ShotFired;
             }
         }
 
@@ -85,11 +89,6 @@ namespace MultiplayerGame.Networking.Messages
         /// Gets or sets Position.
         /// </summary>
         public Vector2 Position { get; set; }
-
-        /// <summary>
-        /// Gets or sets Rotation.
-        /// </summary>
-        public float Rotation { get; set; }
 
         /// <summary>
         /// Gets or sets Velocity.
@@ -112,7 +111,8 @@ namespace MultiplayerGame.Networking.Messages
             this.MessageTime = im.ReadDouble();
             this.Position = im.ReadVector2();
             this.Velocity = im.ReadVector2();
-            this.Rotation = im.ReadSingle();
+            this.FiredByPlayer = im.ReadBoolean();
+            this.FiredById = im.ReadInt64();
         }
 
         /// <summary>
@@ -127,7 +127,8 @@ namespace MultiplayerGame.Networking.Messages
             om.Write(this.MessageTime);
             om.Write(this.Position);
             om.Write(this.Velocity);
-            om.Write(this.Rotation);
+            om.Write(this.FiredByPlayer);
+            om.Write(this.FiredById);
         }
 
         #endregion

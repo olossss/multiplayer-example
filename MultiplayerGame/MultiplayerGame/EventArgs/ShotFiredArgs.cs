@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="AsteroidStateChangedArgs.cs" company="">
+// <copyright file="ShotFiredArgs.cs" company="">
 //   
 // </copyright>
 // <summary>
@@ -16,19 +16,19 @@ namespace MultiplayerGame.EventArgs
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class AsteroidStateChangedArgs : EventArgs
+    public class ShotFiredArgs : EventArgs
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="AsteroidStateChangedArgs"/> class.
+        /// Initializes a new instance of the <see cref="ShotFiredArgs"/> class.
         /// </summary>
-        /// <param name="asteroid">
-        /// The asteroid.
+        /// <param name="shot">
+        /// The shot.
         /// </param>
-        public AsteroidStateChangedArgs(Asteroid asteroid)
+        public ShotFiredArgs(Shot shot)
         {
-            this.Asteroid = asteroid;
+            this.Shot = shot;
         }
 
         #endregion
@@ -36,9 +36,9 @@ namespace MultiplayerGame.EventArgs
         #region Public Properties
 
         /// <summary>
-        /// Gets Asteroid.
+        /// Gets Shot.
         /// </summary>
-        public Asteroid Asteroid { get; private set; }
+        public Shot Shot { get; private set; }
 
         #endregion
     }

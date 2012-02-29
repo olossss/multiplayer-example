@@ -1,17 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using MultiplayerGame;
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="Program.cs" company="">
+//   
+// </copyright>
+// <summary>
+//   The program.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace Client
 {
+    using System.Threading;
+
+    using MultiplayerGame;
     using MultiplayerGame.Networking;
 
-    class Program
+    /// <summary>
+    /// The program.
+    /// </summary>
+    internal class Program
     {
-        static void Main(string[] args)
+        #region Methods
+
+        /// <summary>
+        /// The main.
+        /// </summary>
+        /// <param name="args">
+        /// The args.
+        /// </param>
+        private static void Main(string[] args)
         {
             Thread.Sleep(1000);
 
@@ -20,5 +36,7 @@ namespace Client
                 game.Run();
             }
         }
+
+        #endregion
     }
 }

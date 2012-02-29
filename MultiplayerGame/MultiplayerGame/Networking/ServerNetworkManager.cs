@@ -1,37 +1,52 @@
-﻿// -----------------------------------------------------------------------
+﻿// --------------------------------------------------------------------------------------------------------------------
 // <copyright file="ServerNetworkManager.cs" company="">
-// TODO: Update copyright text.
+//   
 // </copyright>
-// -----------------------------------------------------------------------
-
-using MultiplayerGame.Networking.Messages;
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame.Networking
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     using Lidgren.Network;
+
+    using MultiplayerGame.Networking.Messages;
 
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
     public class ServerNetworkManager : INetworkManager
     {
-        private NetServer netServer;
+        #region Constants and Fields
 
+        /// <summary>
+        /// The is disposed.
+        /// </summary>
         private bool isDisposed;
 
+        /// <summary>
+        /// The net server.
+        /// </summary>
+        private NetServer netServer;
+
+        #endregion
+
+        #region Public Methods and Operators
+
+        /// <summary>
+        /// The connect.
+        /// </summary>
         public void Connect()
         {
             var config = new NetPeerConfiguration("Asteroid")
-            {
-                Port = Convert.ToInt32("14242"),
-                //SimulatedMinimumLatency = 0.2f, 
-                //SimulatedLoss = 0.1f 
-            };
+                {
+                    Port = Convert.ToInt32("14242"), 
+                    // SimulatedMinimumLatency = 0.2f, 
+                    // SimulatedLoss = 0.1f 
+                };
             config.EnableMessageType(NetIncomingMessageType.WarningMessage);
             config.EnableMessageType(NetIncomingMessageType.VerboseDebugMessage);
             config.EnableMessageType(NetIncomingMessageType.ErrorMessage);
@@ -39,44 +54,82 @@ namespace MultiplayerGame.Networking
             config.EnableMessageType(NetIncomingMessageType.DebugMessage);
             config.EnableMessageType(NetIncomingMessageType.ConnectionApproval);
 
-            netServer = new NetServer(config);
-            netServer.Start();
+            this.netServer = new NetServer(config);
+            this.netServer.Start();
         }
 
-        public void Disconnect()
-        {
-            netServer.Shutdown("Bye");
-        }
-
-        public NetIncomingMessage ReadMessage()
-        {
-            return this.netServer.ReadMessage();
-        }
-
-        public void Recycle(NetIncomingMessage im)
-        {
-            this.netServer.Recycle(im);
-        }
-
-        public void SendMessage(IGameMessage gameMessage)
-        {
-            NetOutgoingMessage om = netServer.CreateMessage();
-            om.Write((byte)gameMessage.MessageType);
-            gameMessage.Encode(om);
-
-            netServer.SendToAll(om, NetDeliveryMethod.ReliableUnordered);
-        }
-
+        /// <summary>
+        /// The create message.
+        /// </summary>
+        /// <returns>
+        /// </returns>
         public NetOutgoingMessage CreateMessage()
         {
             return this.netServer.CreateMessage();
         }
 
+        /// <summary>
+        /// The disconnect.
+        /// </summary>
+        public void Disconnect()
+        {
+            this.netServer.Shutdown("Bye");
+        }
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
         public void Dispose()
         {
             this.Dispose(true);
         }
 
+        /// <summary>
+        /// The read message.
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public NetIncomingMessage ReadMessage()
+        {
+            return this.netServer.ReadMessage();
+        }
+
+        /// <summary>
+        /// The recycle.
+        /// </summary>
+        /// <param name="im">
+        /// The im.
+        /// </param>
+        public void Recycle(NetIncomingMessage im)
+        {
+            this.netServer.Recycle(im);
+        }
+
+        /// <summary>
+        /// The send message.
+        /// </summary>
+        /// <param name="gameMessage">
+        /// The game message.
+        /// </param>
+        public void SendMessage(IGameMessage gameMessage)
+        {
+            NetOutgoingMessage om = this.netServer.CreateMessage();
+            om.Write((byte)gameMessage.MessageType);
+            gameMessage.Encode(om);
+
+            this.netServer.SendToAll(om, NetDeliveryMethod.ReliableUnordered);
+        }
+
+        #endregion
+
+        #region Methods
+
+        /// <summary>
+        /// The dispose.
+        /// </summary>
+        /// <param name="disposing">
+        /// The disposing.
+        /// </param>
         private void Dispose(bool disposing)
         {
             if (!this.isDisposed)
@@ -89,5 +142,7 @@ namespace MultiplayerGame.Networking
                 this.isDisposed = true;
             }
         }
+
+        #endregion
     }
 }
