@@ -1,15 +1,15 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="GameTimer.cs" company="Microsoft">
-// TODO: Update copyright text.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="GameTimer.cs" company="">
+//   
 // </copyright>
-// -----------------------------------------------------------------------
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
 
     /// <summary>
     /// TODO: Update summary.
@@ -18,12 +18,18 @@ namespace MultiplayerGame
     {
         #region Constants and Fields
 
+        /// <summary>
+        /// The stopwatch start.
+        /// </summary>
         private long stopwatchStart;
 
         #endregion
 
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameTimer"/> class.
+        /// </summary>
         public GameTimer()
         {
             this.Reset();
@@ -31,8 +37,25 @@ namespace MultiplayerGame
 
         #endregion
 
-        #region Public Methods
+        #region Public Methods and Operators
 
+        /// <summary>
+        /// The reset.
+        /// </summary>
+        public void Reset()
+        {
+            this.stopwatchStart = this.TimeGetTime();
+        }
+
+        /// <summary>
+        /// The stopwatch.
+        /// </summary>
+        /// <param name="ms">
+        /// The ms.
+        /// </param>
+        /// <returns>
+        /// The stopwatch.
+        /// </returns>
         public bool Stopwatch(int ms)
         {
             if (this.TimeGetTime() > this.stopwatchStart + ms)
@@ -48,14 +71,15 @@ namespace MultiplayerGame
 
         #region Methods
 
-        public void Reset()
-        {
-            this.stopwatchStart = this.TimeGetTime();
-        }
-
+        /// <summary>
+        /// The time get time.
+        /// </summary>
+        /// <returns>
+        /// The time get time.
+        /// </returns>
         private long TimeGetTime()
         {
-            return DateTime.Now.Ticks / 10000; //convert ticks to milliseconds. 10,000 ticks in 1 millisecond.
+            return DateTime.Now.Ticks / 10000; // convert ticks to milliseconds. 10,000 ticks in 1 millisecond.
         }
 
         #endregion

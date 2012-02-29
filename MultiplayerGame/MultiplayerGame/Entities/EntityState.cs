@@ -1,17 +1,17 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="EntityState.cs" company="Microsoft">
-// TODO: Update copyright text.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="EntityState.cs" company="">
+//   
 // </copyright>
-// -----------------------------------------------------------------------
-
-using Microsoft.Xna.Framework;
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame.Entities
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+
+    using Microsoft.Xna.Framework;
 
     /// <summary>
     /// TODO: Update summary.
@@ -20,20 +20,30 @@ namespace MultiplayerGame.Entities
     {
         #region Constants and Fields
 
+        /// <summary>
+        /// The rotation.
+        /// </summary>
         private float rotation;
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
+        /// <summary>
+        /// Gets or sets Position.
+        /// </summary>
         public Vector2 Position { get; set; }
 
+        /// <summary>
+        /// Gets or sets Rotation.
+        /// </summary>
         public float Rotation
         {
             get
             {
                 return this.rotation;
             }
+
             set
             {
                 if (this.rotation == value % MathHelper.TwoPi)
@@ -45,20 +55,25 @@ namespace MultiplayerGame.Entities
             }
         }
 
+        /// <summary>
+        /// Gets or sets Velocity.
+        /// </summary>
         public Vector2 Velocity { get; set; }
 
         #endregion
 
-        #region Implemented Interfaces
+        #region Public Methods and Operators
 
-        #region ICloneable
-
+        /// <summary>
+        /// The clone.
+        /// </summary>
+        /// <returns>
+        /// The clone.
+        /// </returns>
         public object Clone()
         {
             return new EntityState { Position = this.Position, Rotation = this.Rotation, Velocity = this.Velocity };
         }
-
-        #endregion
 
         #endregion
     }

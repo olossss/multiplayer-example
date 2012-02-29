@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="Asteroid.cs" company="">
+// <copyright file="Shot.cs" company="">
 //   
 // </copyright>
 // <summary>
@@ -15,12 +15,12 @@ namespace MultiplayerGame.Entities
     /// <summary>
     /// TODO: Update summary.
     /// </summary>
-    public class Asteroid : Sprite
+    public class Shot : Sprite
     {
         #region Constructors and Destructors
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Asteroid"/> class.
+        /// Initializes a new instance of the <see cref="Shot"/> class.
         /// </summary>
         /// <param name="id">
         /// The id.
@@ -40,33 +40,40 @@ namespace MultiplayerGame.Entities
         /// <param name="simulationState">
         /// The simulation state.
         /// </param>
-        internal Asteroid(
+        /// <param name="firedById">
+        /// The fired by id.
+        /// </param>
+        /// <param name="firedByPlayer">
+        /// The fired by player.
+        /// </param>
+        internal Shot(
             long id, 
             Texture2D texture, 
             Rectangle initialFrame, 
             int frameCount, 
             int collisionRadius, 
-            EntityState simulationState)
+            EntityState simulationState, 
+            long firedById, 
+            bool firedByPlayer)
             : base(id, texture, initialFrame, frameCount, collisionRadius, simulationState)
         {
+            this.FiredByPlayer = firedByPlayer;
+            this.FiredById = firedById;
         }
 
         #endregion
 
-        #region Public Methods and Operators
+        #region Public Properties
 
         /// <summary>
-        /// The reset asteroid state.
+        /// Gets FiredById.
         /// </summary>
-        /// <param name="newState">
-        /// The new state.
-        /// </param>
-        public void ResetAsteroidState(EntityState newState)
-        {
-            this.SimulationState = newState;
-            this.DisplayState = (EntityState)this.SimulationState.Clone();
-            this.PrevDisplayState = (EntityState)this.SimulationState.Clone();
-        }
+        public long FiredById { get; private set; }
+
+        /// <summary>
+        /// Gets a value indicating whether FiredByPlayer.
+        /// </summary>
+        public bool FiredByPlayer { get; private set; }
 
         #endregion
     }

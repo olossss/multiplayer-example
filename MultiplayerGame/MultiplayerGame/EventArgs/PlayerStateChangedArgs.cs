@@ -1,17 +1,17 @@
-﻿// -----------------------------------------------------------------------
-// <copyright file="PlayerStateChangedArgs.cs" company="Microsoft">
-// TODO: Update copyright text.
+﻿// --------------------------------------------------------------------------------------------------------------------
+// <copyright file="PlayerStateChangedArgs.cs" company="">
+//   
 // </copyright>
-// -----------------------------------------------------------------------
-
-using MultiplayerGame.Entities;
+// <summary>
+//   TODO: Update summary.
+// </summary>
+// --------------------------------------------------------------------------------------------------------------------
 
 namespace MultiplayerGame.EventArgs
 {
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
+
+    using MultiplayerGame.Entities;
 
     /// <summary>
     /// TODO: Update summary.
@@ -20,6 +20,12 @@ namespace MultiplayerGame.EventArgs
     {
         #region Constructors and Destructors
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PlayerStateChangedArgs"/> class.
+        /// </summary>
+        /// <param name="player">
+        /// The player.
+        /// </param>
         public PlayerStateChangedArgs(Player player)
         {
             this.Player = player;
@@ -27,8 +33,11 @@ namespace MultiplayerGame.EventArgs
 
         #endregion
 
-        #region Properties
+        #region Public Properties
 
+        /// <summary>
+        /// Gets Player.
+        /// </summary>
         public Player Player { get; private set; }
 
         #endregion
