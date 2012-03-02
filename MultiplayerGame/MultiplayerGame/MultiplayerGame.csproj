@@ -119,6 +119,7 @@
     <Compile Include="Entities\Asteroid.cs" />
     <Compile Include="Entities\Enemy.cs" />
     <Compile Include="Entities\EntityState.cs" />
+    <Compile Include="Entities\Particle.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\Shot.cs" />
     <Compile Include="Entities\Sprite.cs" />
@@ -128,7 +129,9 @@
     <Compile Include="EventArgs\SpawnEnemyArgs.cs" />
     <Compile Include="GameTimer.cs" />
     <Compile Include="Managers\AsteroidManager.cs" />
+    <Compile Include="Managers\CollisionManager.cs" />
     <Compile Include="Managers\EnemyManager.cs" />
+    <Compile Include="Managers\ExplosionManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Managers\ResolutionManager.cs" />
