@@ -80,6 +80,10 @@ namespace MultiplayerGame
         /// </summary>
         private SpriteBatch spriteBatch;
 
+        private ExplosionManager explosionManager;
+
+        private CollisionManager collisionManager;
+
         #endregion
 
         #region Constructors and Destructors
@@ -148,6 +152,7 @@ namespace MultiplayerGame
             this.playerManager.Draw(this.spriteBatch);
             this.shotManager.Draw(this.spriteBatch);
             this.enemyManager.Draw(this.spriteBatch);
+            this.explosionManager.Draw(this.spriteBatch);
 
             this.spriteBatch.End();
 
@@ -192,6 +197,9 @@ namespace MultiplayerGame
                     (sender, e) => this.networkManager.SendMessage(new EnemySpawnedMessage(e.Enemy));
             }
 
+            this.explosionManager = new ExplosionManager(this.soundManager, randomNumberGenerator);
+            this.collisionManager = new CollisionManager(this.asteroidManager, this.playerManager, this.enemyManager, this.explosionManager, this.shotManager);
+
             this.Components.Add(this.inputManager);
 
             base.Initialize();
@@ -215,6 +223,7 @@ namespace MultiplayerGame
             this.asteroidManager.LoadContent(this.Content);
             this.playerManager.LoadContent(this.Content);
             this.enemyManager.LoadContent(this.Content);
+            this.explosionManager.LoadContent(this.Content);
 
             if (this.IsHost)
             {
@@ -254,6 +263,8 @@ namespace MultiplayerGame
             this.playerManager.Update(gameTime);
             this.shotManager.Update(gameTime);
             this.enemyManager.Update(gameTime);
+            this.explosionManager.Update(gameTime);
+            this.collisionManager.Update(gameTime);
 
             base.Update(gameTime);
         }
