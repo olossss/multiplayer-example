@@ -117,6 +117,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entities\Asteroid.cs" />
+    <Compile Include="Entities\Enemy.cs" />
     <Compile Include="Entities\EntityState.cs" />
     <Compile Include="Entities\Player.cs" />
     <Compile Include="Entities\Shot.cs" />
@@ -124,8 +125,10 @@
     <Compile Include="EventArgs\AsteroidStateChangedArgs.cs" />
     <Compile Include="EventArgs\PlayerStateChangedArgs.cs" />
     <Compile Include="EventArgs\ShotFiredArgs.cs" />
+    <Compile Include="EventArgs\SpawnEnemyArgs.cs" />
     <Compile Include="GameTimer.cs" />
     <Compile Include="Managers\AsteroidManager.cs" />
+    <Compile Include="Managers\EnemyManager.cs" />
     <Compile Include="Managers\InputManager.cs" />
     <Compile Include="Managers\PlayerManager.cs" />
     <Compile Include="Managers\ResolutionManager.cs" />
@@ -133,6 +136,7 @@
     <Compile Include="Managers\SoundManager.cs" />
     <Compile Include="Networking\ClientNetworkManager.cs" />
     <Compile Include="Networking\INetworkManager.cs" />
+    <Compile Include="Networking\Messages\EnemySpawnedMessage.cs" />
     <Compile Include="Networking\Messages\GameMessageTypes.cs" />
     <Compile Include="Networking\Messages\IGameMessage.cs" />
     <Compile Include="Networking\Messages\ShotFiredMessage.cs" />

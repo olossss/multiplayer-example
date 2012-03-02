@@ -27,6 +27,11 @@ namespace MultiplayerGame.Networking.Messages
         /// <summary>
         /// The shot fired.
         /// </summary>
-        ShotFired
+        ShotFired, 
+
+        /// <summary>
+        /// The enemy spawned.
+        /// </summary>
+        EnemySpawned
     }
 }

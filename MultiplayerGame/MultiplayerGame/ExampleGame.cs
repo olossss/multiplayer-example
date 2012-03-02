@@ -51,6 +51,11 @@ namespace MultiplayerGame
         private AsteroidManager asteroidManager;
 
         /// <summary>
+        /// The enemy manager.
+        /// </summary>
+        private EnemyManager enemyManager;
+
+        /// <summary>
         /// The input manager.
         /// </summary>
         private InputManager inputManager;
@@ -142,6 +147,7 @@ namespace MultiplayerGame
             this.asteroidManager.Draw(this.spriteBatch);
             this.playerManager.Draw(this.spriteBatch);
             this.shotManager.Draw(this.spriteBatch);
+            this.enemyManager.Draw(this.spriteBatch);
 
             this.spriteBatch.End();
 
@@ -178,6 +184,14 @@ namespace MultiplayerGame
             this.playerManager.PlayerStateChanged +=
                 (sender, e) => this.networkManager.SendMessage(new UpdatePlayerStateMessage(e.Player));
 
+            this.enemyManager = new EnemyManager(
+                randomNumberGenerator, this.shotManager, this.playerManager, this.IsHost);
+            if (this.IsHost)
+            {
+                this.enemyManager.EnemySpawned +=
+                    (sender, e) => this.networkManager.SendMessage(new EnemySpawnedMessage(e.Enemy));
+            }
+
             this.Components.Add(this.inputManager);
 
             base.Initialize();
@@ -200,6 +214,7 @@ namespace MultiplayerGame
             this.shotManager.LoadContent(this.Content);
             this.asteroidManager.LoadContent(this.Content);
             this.playerManager.LoadContent(this.Content);
+            this.enemyManager.LoadContent(this.Content);
 
             if (this.IsHost)
             {
@@ -238,8 +253,26 @@ namespace MultiplayerGame
             this.asteroidManager.Update(gameTime);
             this.playerManager.Update(gameTime);
             this.shotManager.Update(gameTime);
+            this.enemyManager.Update(gameTime);
 
             base.Update(gameTime);
+        }
+
+        /// <summary>
+        /// The handle enemy spawned message.
+        /// </summary>
+        /// <param name="im">
+        /// The im.
+        /// </param>
+        private void HandleEnemySpawnedMessage(NetIncomingMessage im)
+        {
+            var message = new EnemySpawnedMessage(im);
+
+            var timeDelay = (float)(NetTime.Now - im.SenderConnection.GetLocalTime(message.MessageTime));
+
+            Vector2 adjustedPosition = message.Position + (message.Velocity * timeDelay);
+
+            this.enemyManager.SpawnEnemy(message.Id, message.Path, adjustedPosition, message.Velocity, message.Rotation);
         }
 
         /// <summary>
@@ -278,7 +311,6 @@ namespace MultiplayerGame
                                     message.Id, message.Position, message.Velocity, message.Rotation);
 
             // asteroid.EnableSmoothing = true;
-
             if (asteroid.LastUpdateTime < message.MessageTime)
             {
                 asteroid.SimulationState.Position = message.Position += message.Velocity * timeDelay;
@@ -375,6 +407,9 @@ namespace MultiplayerGame
                                 break;
                             case GameMessageTypes.ShotFired:
                                 this.HandleShotFiredMessage(im);
+                                break;
+                            case GameMessageTypes.EnemySpawned:
+                                this.HandleEnemySpawnedMessage(im);
                                 break;
                         }
 
